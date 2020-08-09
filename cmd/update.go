@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	
+	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -24,21 +24,20 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Actualiza una credencial o un secreto",
+	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		
-		var secret = models.Secret{}
-		return secret.Update(args[0],args[1],args[2])
+		if flags, _ := cmd.Flags().GetBool("secret"); flags {
+			return models.VarSecret.Update(libs.Owner, args[0], args[1])
+		} else {
+			return models.VarCredential.Update(libs.Owner, args[0], args[1], args[2])
+		}
+
 	},
 }
 
 func init() {
+	updateCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
 	rootCmd.AddCommand(updateCmd)
 
 	// Here you will define your flags and configuration settings.

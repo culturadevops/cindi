@@ -17,12 +17,14 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"os"
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/viper"
-	"github.com/culturadevops/cindi/libs"
 	"log"
+	"os"
+
+	"github.com/culturadevops/cindi/libs"
+	"github.com/culturadevops/cindi/models"
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -31,7 +33,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "cindi",
 	Short: "getionador de creadeciales",
-	Long: ``,
+	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -82,25 +84,29 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	viper.SetConfigName(".config/cindi/mysql")
-		if err := viper.ReadInConfig(); err != nil {
-			log.Fatalf("Error reading config file, %s", err)
-		}
-	
-		dbConfig := libs.DbConfig{
-			viper.GetString("default.host"),
-			viper.GetString("default.port"),
-			viper.GetString("default.database"),
-			viper.GetString("default.user"),
-			viper.GetString("default.password"),
-			viper.GetString("default.charset"),
-			viper.GetInt("default.MaxIdleConns"),
-			viper.GetInt("default.MaxOpenConns"),
-		}
-		libs.DB = dbConfig.InitDB()
-		if viper.GetBool("default.sql_log") {
-			libs.DB.LogMode(true)
-		}else{
-			libs.DB.LogMode(false)
-		}
-	
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Error reading config file, %s", err)
+	}
+	libs.Owner = viper.GetString("default.owner")
+
+	dbConfig := libs.DbConfig{
+		viper.GetString("default.host"),
+		viper.GetString("default.port"),
+		viper.GetString("default.database"),
+		viper.GetString("default.user"),
+		viper.GetString("default.password"),
+		viper.GetString("default.charset"),
+		viper.GetInt("default.MaxIdleConns"),
+		viper.GetInt("default.MaxOpenConns"),
+	}
+	libs.DB = dbConfig.InitDB()
+	models.VarCredential = &models.Credential{}
+	models.VarSecret = &models.Secret{}
+
+	if viper.GetBool("default.sql_log") {
+		libs.DB.LogMode(true)
+	} else {
+		libs.DB.LogMode(false)
+	}
+
 }

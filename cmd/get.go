@@ -17,8 +17,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/culturadevops/cindi/models"
+	"strconv"
+
 	"github.com/atotto/clipboard"
+	"github.com/culturadevops/cindi/libs"
+	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
 
@@ -26,25 +29,44 @@ import (
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Obtienes el user/contraseña en el portapapeles; puedes usar ctrl+v para pegarla",
-	Long: ``,
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		var secret = models.Secret{}
-		secret,_=	secret.Get(args[0])
-		if flags,_:=cmd.Flags().GetBool("cuenta");flags {
-			clipboard.WriteAll(secret.Account);
-			fmt.Printf("use ctrl+v para pegar el USUARIO=%v de %v \n" ,secret.Account,args[0])
-		}else{
-			clipboard.WriteAll(secret.Password);
-			fmt.Println("use ctrl+v para pegar la CONTRASEÑA de " +args[0])
+
+		if flags, _ := cmd.Flags().GetBool("secret"); flags {
+			secret := models.Secret{}
+			if flags, _ := cmd.Flags().GetBool("id"); flags {
+				id, _ := strconv.ParseInt(args[0], 10, 64)
+				secret, _ = models.VarSecret.GetForId(libs.Owner, id)
+			} else {
+				secret, _ = models.VarSecret.Get(libs.Owner, args[0])
+
+			}
+			clipboard.WriteAll(secret.Secret)
+			fmt.Printf("use ctrl+v para pegar el SECRETO de %v \n", args[0])
+		} else {
+			credential := models.Credential{}
+			if flags, _ := cmd.Flags().GetBool("id"); flags {
+				id, _ := strconv.ParseInt(args[0], 10, 64)
+				credential, _ = models.VarCredential.GetForId(libs.Owner, id)
+			} else {
+				credential, _ = models.VarCredential.Get(libs.Owner, args[0])
+			}
+			if flags, _ := cmd.Flags().GetBool("user"); flags {
+				clipboard.WriteAll(credential.Account)
+				fmt.Printf("use ctrl+v para pegar el USUARIO=%v de %v \n", credential.Account, credential.Name)
+			} else {
+				clipboard.WriteAll(credential.Password)
+				fmt.Println("use ctrl+v para pegar la CONTRASEÑA de " + credential.Name)
+			}
 		}
 
-		
-		
 	},
 }
 
 func init() {
-	getCmd.Flags().BoolP("cuenta", "c", false, "Obtiene el nombre de la cuenta")
+	getCmd.Flags().BoolP("id", "i", false, "Obtiene una cuenta dado el numero de id")
+	getCmd.Flags().BoolP("user", "u", false, "Obtiene el nombre de la cuenta")
+	getCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
 	rootCmd.AddCommand(getCmd)
 
 	// Here you will define your flags and configuration settings.

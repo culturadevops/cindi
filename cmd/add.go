@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-
+	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -25,14 +25,19 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Agrega una creadencial",
-	Long: ``,
+	Long:  ``,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var secret = models.Secret{}
-		return secret.Add(args[0],args[1],args[2])
+		if flags, _ := cmd.Flags().GetBool("secret"); flags {
+			return models.VarSecret.Add(libs.Owner, args[0], args[1])
+		} else {
+			return models.VarCredential.Add(libs.Owner, args[0], args[1], args[2])
+		}
+
 	},
 }
 
 func init() {
+	addCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
 	rootCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.

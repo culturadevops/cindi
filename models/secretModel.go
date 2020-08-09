@@ -1,80 +1,87 @@
 package models
 
 import (
-
 	"errors"
 
 	"github.com/culturadevops/cindi/libs"
 	"github.com/jinzhu/gorm"
 )
+
+var VarSecret *Secret
+
 type Secret struct {
 	gorm.Model
-	Name     string `gorm:"type:varchar(200);not null;"`
-	Secret     string `gorm:"type:text;not null;"`
+	Owner  string `gorm:"type:varchar(50);not null;"`
+	Name   string `gorm:"type:varchar(100);not null;"`
+	Secret string `gorm:"type:text;not null;"`
 }
 
-func (this *Secret) Add(name string,text string) error {
-	var varSecret Secret
-	db := libs.DB
-	varSecret.Name=name
-	varSecret.Secret=text
+func (this *Secret) Add(owner string, name string, text string) error {
+	this.Owner = owner
+	this.Name = name
+	this.Secret = text
 
-	if !db.Where("name = ? ", varSecret.Name).First(&Secret{}).RecordNotFound() {
-		return errors.New("Ya existe un item con el nombre "+varSecret.Name )
+	if !libs.DB.Where("owner = ? AND  name = ? ", owner, name).First(&Secret{}).RecordNotFound() {
+		return errors.New("Ya existe un item con el nombre " + name)
 	}
-	if err := db.Create(&varSecret).Error; err != nil {
+	if err := libs.DB.Create(&this).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Secret) Get(name string) (Secret,error){
-	var data = Secret{}
-	db := libs.DB
 
-	if db.Where("name in (?)", name).Find(&data).RecordNotFound() {
-		return Secret{}, errors.New("no se encontro las credenciales "+ name)
+func (this *Secret) GetForId(owner string, id int64) (Secret, error) {
+	var data = Secret{}
+
+	if libs.DB.Where("owner = ? AND  id = ? ", owner, id).Find(&data).RecordNotFound() {
+		return Secret{}, errors.New("no se encontro las credenciales ")
 	}
 	return data, nil
 }
-func (this *Secret) List() []Secret {
-	var data = []Secret{}
-	db := libs.DB
+func (this *Secret) Get(owner string, name string) (Secret, error) {
+	var data = Secret{}
 
-	err := db.Find(&data).Error
+	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&data).RecordNotFound() {
+		return Secret{}, errors.New("no se encontro las credenciales " + name)
+	}
+	return data, nil
+}
+func (this *Secret) List(owner string) []Secret {
+	var data = []Secret{}
+
+	err := libs.DB.Where("owner = ? ", owner).Find(&data).Error
 	if err != nil {
 		//log.Fatalln(err)
 	}
 	return data
 }
-func (this *Secret) Del(name string) error {
+func (this *Secret) Del(owner string, name string) error {
 	var data Secret
-	db := libs.DB
-	if err := db.Where("name = ?", name).Unscoped().Delete(&data).Error; err != nil {
+
+	if err := libs.DB.Where("owner = ? AND  name = ? ", owner, name).Unscoped().Delete(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Secret) DelForId(id int64) error {
+func (this *Secret) DelForId(owner string, id int64) error {
 	var data Secret
-	db := libs.DB
 
-
-	if err := db.Where("id = ?", id).Unscoped().Delete(&data).Error; err != nil {
+	if err := libs.DB.Where("owner = ? AND  id = ? ", owner, id).Unscoped().Delete(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Secret) Update(name string,secret string) error {
+func (this *Secret) Update(owner string, name string, secret string) error {
 	var varSecret Secret
-	db := libs.DB
-	varSecret.Name=name
-	
-	if db.Where("name = ?", varSecret.Name).Find(&varSecret).RecordNotFound() {
+
+	varSecret.Name = name
+
+	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&varSecret).RecordNotFound() {
 		return errors.New("no existe la credencial " + name)
 	}
-	varSecret.Secret=secret
+	varSecret.Secret = secret
 
-	if err := db.Save(&varSecret).Error; err != nil {
+	if err := libs.DB.Save(&varSecret).Error; err != nil {
 		return err
 	}
 	return nil

@@ -2,13 +2,15 @@ package libs
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
 	"os"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var DB *gorm.DB
+var Owner string
 
 type DbConfig struct {
 	Host         string

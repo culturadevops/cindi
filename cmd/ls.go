@@ -17,6 +17,8 @@ package cmd
 
 import (
 	"fmt"
+
+	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -25,15 +27,17 @@ import (
 var lsCmd = &cobra.Command{
 	Use:   "ls",
 	Short: "Lista todas las credenciales",
-	Long: ``,
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		var secret = models.Secret{}
-
-		list:=secret.List()
-		fmt.Printf("hay %v items\n",len(list))
-		for _,value:=range list{
-
-		fmt.Printf("%v-%v \n",value.ID,value.Name)
+		list := models.VarCredential.List(libs.Owner)
+		fmt.Printf("Hay %v credenciales\n", len(list))
+		for _, value := range list {
+			fmt.Printf("%v-%v \n", value.ID, value.Name)
+		}
+		listsecret := models.VarSecret.List(libs.Owner)
+		fmt.Printf("Hay %v secretos\n", len(listsecret))
+		for _, value := range listsecret {
+			fmt.Printf("%v-%v \n", value.ID, value.Name)
 		}
 	},
 }

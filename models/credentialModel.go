@@ -1,82 +1,90 @@
 package models
 
 import (
-
 	"errors"
 
 	"github.com/culturadevops/cindi/libs"
 	"github.com/jinzhu/gorm"
 )
-type Credencial struct {
-	gorm.Model
-	Name     string `gorm:"type:varchar(200);not null;"`
-	Account     string `gorm:"type:varchar(200);not null;"`
-	Password string    `gorm:"type:varchar(320);not null;"`
 
+var VarCredential *Credential
+
+type Credential struct {
+	gorm.Model
+
+	Owner    string `gorm:"type:varchar(50);not null;"`
+	Name     string `gorm:"type:varchar(100);not null;"`
+	Account  string `gorm:"type:varchar(200);not null;"`
+	Password string `gorm:"type:varchar(320);not null;"`
 }
 
-func (this *Credencial) Add(name string,account string, password string) error {
-	var varCredencial Credencial
-	db := libs.DB
-	varCredencial.Name=name
-	varCredencial.Account=account
-	varCredencial.Password=password
-	if !db.Where("name = ? ", varCredencial.Name).First(&Credencial{}).RecordNotFound() {
-		return errors.New("Ya existe un item con el nombre "+varCredencial.Name )
+func (this *Credential) Add(owner string, name string, account string, password string) error {
+
+	this.Owner = owner
+	this.Name = name
+	this.Account = account
+	this.Password = password
+	if !libs.DB.Where("owner = ? AND  name = ? ", owner, name).First(&Credential{}).RecordNotFound() {
+		return errors.New("Ya existe un item con el nombre " + name)
 	}
-	if err := db.Create(&varCredencial).Error; err != nil {
+	if err := libs.DB.Create(&this).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Credencial) Get(name string) (Credencial,error){
-	var data = Credencial{}
-	db := libs.DB
 
-	if db.Where("name in (?)", name).Find(&data).RecordNotFound() {
-		return Credencial{}, errors.New("no se encontro las credenciales "+ name)
+func (this *Credential) GetForId(owner string, id int64) (Credential, error) {
+	var data = Credential{}
+
+	if libs.DB.Where("owner = ? AND  id = ? ", owner, id).Find(&data).RecordNotFound() {
+		return Credential{}, errors.New("no se encontro las Credentiales ")
 	}
 	return data, nil
 }
-func (this *Credencial) List() []Credencial {
-	var data = []Credencial{}
-	db := libs.DB
+func (this *Credential) Get(owner string, name string) (Credential, error) {
+	var data = Credential{}
 
-	err := db.Find(&data).Error
+	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&data).RecordNotFound() {
+		return Credential{}, errors.New("no se encontro las Credentiales " + name)
+	}
+	return data, nil
+}
+func (this *Credential) List(owner string) []Credential {
+	var data = []Credential{}
+
+	err := libs.DB.Where("owner = ?", owner).Find(&data).Error
 	if err != nil {
 		//log.Fatalln(err)
 	}
 	return data
 }
-func (this *Credencial) Del(name string) error {
-	var data Credencial
-	db := libs.DB
-	if err := db.Where("name = ?", name).Unscoped().Delete(&data).Error; err != nil {
+func (this *Credential) Del(owner string, name string) error {
+	var data Credential
+
+	if err := libs.DB.Where("owner = ? AND  name = ? ", owner, name).Unscoped().Delete(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Credencial) DelForId(id int64) error {
-	var data Credencial
-	db := libs.DB
+func (this *Credential) DelForId(owner string, id int64) error {
+	var data Credential
 
-
-	if err := db.Where("id = ?", id).Unscoped().Delete(&data).Error; err != nil {
+	if err := libs.DB.Where("owner = ? AND  id = ? ", owner, id).Unscoped().Delete(&data).Error; err != nil {
 		return err
 	}
 	return nil
 }
-func (this *Credencial) Update(name string,account string, password string) error {
-	var varCredencial Credencial
-	db := libs.DB
-	varCredencial.Name=name
-	
-	if db.Where("name = ?", varCredencial.Name).Find(&varCredencial).RecordNotFound() {
-		return errors.New("no existe la credencial " + name)
+func (this *Credential) Update(owner string, name string, account string, password string) error {
+	var varCredential Credential
+
+	varCredential.Name = name
+
+	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&varCredential).RecordNotFound() {
+		return errors.New("no existe la Credential " + name)
 	}
-	varCredencial.Account=account
-	varCredencial.Password=password
-	if err := db.Save(&varCredencial).Error; err != nil {
+	varCredential.Account = account
+	varCredential.Password = password
+	if err := libs.DB.Save(&varCredential).Error; err != nil {
 		return err
 	}
 	return nil
