@@ -47,12 +47,12 @@ cindi add -h
 ## Installation
 
 1. Ejecuta el query de sql que puede encontrar en copi/sql/tablas.sql en tu msyql server
-2. Copiar el archivo copi/cindi/mysql.toml  en C:\Users\[tuusuario]\.config\cindi\mysql.toml
+2. Copiar el archivo copi/cindi/mysql.toml  en C:\Users\tu-usuario\.config\cindi\mysql.toml
 3. Cambiar la configuracion de mysql.toml a la configuracion de tu mysql server
 
 ## Compilar cindi en linux
 
-para compilar el proyecto debes descargartelo o hacer git clone del proyecto, entrar en el y escribir go install y con esto ya tendras el go en la ruta go/bin
+para compilar el proyecto debes descargartelo o hacer git clone del proyecto, entrar en el y escribir go install y con esto ya tendras cindi en la ruta go/bin
 
 nota: si al ejecutar cindi no puedes ver el aplicativo debes configurar la ruta de go/bin en las variables de entorno
 
@@ -60,7 +60,7 @@ nota: si al ejecutar cindi no puedes ver el aplicativo debes configurar la ruta 
 export PATH=$PATH:/usr/local/go/bin
 ```
 ## Compilar cindi en windows
-para compilar el proyecto debes descargartelo o hacer git clone del proyecto, entrar en el y escribir go install y con esto ya tendras el go en la ruta go/bin
+para compilar el proyecto debes descargartelo o hacer git clone del proyecto, entrar en el y escribir go install y con esto ya tendras cindi en la ruta go/bin
 
 nota: si al ejecutar cindi no puedes ver el aplicativo debes configurar la ruta de go/bin en las variables de entorno
 
