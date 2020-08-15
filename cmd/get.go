@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -28,45 +29,38 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "Obtienes el user/contraseña en el portapapeles; puedes usar ctrl+v para pegarla",
-	Long:  ``,
+	Short: "Obtienes el secreto en el portapapeles; puedes usar ctrl+v para pegarla",
+	Long: `al usar este comando podras obtener el secreto del registro 
+	siempre obtendras el ultimo parametro en el portapapeles
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
+		var x models.Items
+		secret := models.Secret{}
 
-		if flags, _ := cmd.Flags().GetBool("secret"); flags {
-			secret := models.Secret{}
-			if flags, _ := cmd.Flags().GetBool("id"); flags {
-				id, _ := strconv.ParseInt(args[0], 10, 64)
-				secret, _ = models.VarSecret.GetForId(libs.Owner, id)
-			} else {
-				secret, _ = models.VarSecret.Get(libs.Owner, args[0])
-
-			}
-			clipboard.WriteAll(secret.Secret)
-			fmt.Printf("use ctrl+v para pegar el SECRETO de %v \n", args[0])
+		if flags, _ := cmd.Flags().GetBool("id"); flags {
+			id, _ := strconv.ParseInt(args[0], 10, 64)
+			secret, _ = models.VarSecret.GetForId(libs.Owner, id)
 		} else {
-			credential := models.Credential{}
-			if flags, _ := cmd.Flags().GetBool("id"); flags {
-				id, _ := strconv.ParseInt(args[0], 10, 64)
-				credential, _ = models.VarCredential.GetForId(libs.Owner, id)
-			} else {
-				credential, _ = models.VarCredential.Get(libs.Owner, args[0])
-			}
-			if flags, _ := cmd.Flags().GetBool("user"); flags {
-				clipboard.WriteAll(credential.Account)
-				fmt.Printf("use ctrl+v para pegar el USUARIO=%v de %v \n", credential.Account, credential.Name)
-			} else {
-				clipboard.WriteAll(credential.Password)
-				fmt.Println("use ctrl+v para pegar la CONTRASEÑA de " + credential.Name)
-			}
+			secret, _ = models.VarSecret.Get(libs.Owner, args[0])
+
 		}
+		json.Unmarshal([]byte(secret.Secret), &x)
+		if x.Type == "credential" {
+			fmt.Printf("Identificador %v - %v \nUser= %v \n", args[0], secret.Name, x.Items["user"])
+		}
+		if x.Type == "amazon" {
+			fmt.Printf("Identificador %v - %v \nAccount ID= %vUser= %v \n", args[0], secret.Name, x.Items["account"], x.Items["user"])
+		}
+		clipboard.WriteAll(x.Items["secret"])
+
+		fmt.Printf("use ctrl+v para pegar el SECRETO de %v - %v  \n", args[0], secret.Name)
 
 	},
 }
 
 func init() {
 	getCmd.Flags().BoolP("id", "i", false, "Obtiene una cuenta dado el numero de id")
-	getCmd.Flags().BoolP("user", "u", false, "Obtiene el nombre de la cuenta")
-	getCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
+
 	rootCmd.AddCommand(getCmd)
 
 	// Here you will define your flags and configuration settings.

@@ -32,7 +32,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cindi",
-	Short: "getionador de creadeciales",
+	Short: "Getionador de credenciales",
 	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -64,31 +64,43 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".cindi" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".cindi")
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+
+	// Search config in home directory with name ".cindi" (without extension).
+	viper.AddConfigPath(home)
+	//viper.SetConfigName(".cindi")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	viper.SetConfigName(".config/cindi/mysql")
+	file := home + ".config/cindi/mysql"
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
 	libs.Owner = viper.GetString("default.owner")
 
+	if viper.GetString("default.host") == "" {
+		fmt.Println("falta host en el archivo " + file)
+		os.Exit(1)
+	}
+	if viper.GetString("default.database") == "" {
+		fmt.Println("falta database en el archivo de config " + file)
+		os.Exit(1)
+	}
+	if viper.GetString("default.user") == "" {
+		fmt.Println("falta user en el archivo de config " + file)
+		os.Exit(1)
+	}
+	if viper.GetString("default.password") == "" {
+		fmt.Println("falta password en el archivo de config " + file)
+		os.Exit(1)
+	}
 	dbConfig := libs.DbConfig{
 		viper.GetString("default.host"),
 		viper.GetString("default.port"),

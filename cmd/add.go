@@ -24,20 +24,48 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Agrega una creadencial",
-	Long:  ``,
+	Short: "Agrega una secreto, los modificadores definen el tipo",
+	Long: `Al usar este comando podras guardar un secreto de 
+	tipo token un solo parametro
+	tipo credenciales dos parametros
+	tipo amazon tres parametros
+Recuerda el ultimo parametro siempre sera el secreto
+			`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if flags, _ := cmd.Flags().GetBool("secret"); flags {
-			return models.VarSecret.Add(libs.Owner, args[0], args[1])
-		} else {
-			return models.VarCredential.Add(libs.Owner, args[0], args[1], args[2])
+		if flags, _ := cmd.Flags().GetBool("secret1"); flags {
+			if len(args) == 2 {
+				return models.VarSecret.Additem(libs.Owner, args[0], args[1])
+			} else {
+				print("falta un valor 'secret'")
+				return nil
+			}
 		}
+		if flags, _ := cmd.Flags().GetBool("secret2"); flags {
+			if len(args) == 3 {
+				return models.VarSecret.Additem1(libs.Owner, args[0], args[1], args[2])
+			} else {
+				print("Necesitas 'idenficador' 'user' 'secret' ")
+				return nil
+			}
 
+			//	return models.VarCredential.Add(libs.Owner, args[0], args[1], args[2])
+		} else if flags, _ := cmd.Flags().GetBool("secret3"); flags {
+			if len(args) == 4 {
+				return models.VarSecret.Additem2(libs.Owner, args[0], args[1], args[2], args[3])
+			} else {
+				print("Necesitas 'idenficador' 'account' 'user' 'secret' ")
+				return nil
+			}
+		}
+		print("Falta modificador user -h para ver opciones")
+		return nil
 	},
 }
 
 func init() {
-	addCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
+	addCmd.Flags().BoolP("secret1", "t", false, "Crear un secreto en forma token de 'secret' ")
+	addCmd.Flags().BoolP("secret2", "c", false, "Crear un secreto en forma credencial de user/secret")
+	addCmd.Flags().BoolP("secret3", "a", false, "Crear un secreto en forma amazon credencial de Accountid/user/secret")
 	rootCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.

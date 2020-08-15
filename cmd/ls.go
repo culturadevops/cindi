@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/culturadevops/cindi/libs"
@@ -26,18 +27,16 @@ import (
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
 	Use:   "ls",
-	Short: "Lista todas las credenciales",
+	Short: "Lista todos los secretos",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		list := models.VarCredential.List(libs.Owner)
-		fmt.Printf("Hay %v credenciales\n", len(list))
-		for _, value := range list {
-			fmt.Printf("%v-%v \n", value.ID, value.Name)
-		}
+		var x models.Items
 		listsecret := models.VarSecret.List(libs.Owner)
+
 		fmt.Printf("Hay %v secretos\n", len(listsecret))
 		for _, value := range listsecret {
-			fmt.Printf("%v-%v \n", value.ID, value.Name)
+			json.Unmarshal([]byte(value.Secret), &x)
+			fmt.Printf("%v-%v t:%v\n", value.ID, value.Name, x.Type)
 		}
 	},
 }

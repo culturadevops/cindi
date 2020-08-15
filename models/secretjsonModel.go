@@ -3,19 +3,68 @@ package models
 import (
 	"errors"
 
+	"encoding/json"
+
 	"github.com/culturadevops/cindi/libs"
 	"github.com/jinzhu/gorm"
 )
 
 var VarSecret *Secret
 
+type Items struct {
+	Type  string            `json:"type"`
+	Items map[string]string `json:"item"`
+}
+
+func (this *Secret) itemToken(token string) Items {
+
+	i := make(map[string]string)
+	i["secret"] = token
+	res := Items{Type: "token", Items: i}
+	return res
+}
+
+func (this *Secret) itemCredencial(user string, pass string) Items {
+	i := make(map[string]string)
+	i["user"] = user
+	i["secret"] = pass
+	res := Items{Type: "credential", Items: i}
+	return res
+}
+func (this *Secret) itemAmazonCredencial(accountid string, user string, pass string) Items {
+	i := make(map[string]string)
+	i["account"] = accountid
+	i["user"] = user
+	i["secret"] = pass
+	res := Items{Type: "amazon", Items: i}
+	return res
+}
+func (this *Secret) jsoncode(item Items) string {
+
+	bs1, _ := json.Marshal(item)
+	//fmt.Println(string(bs1))
+	return string(bs1)
+}
+
 type Secret struct {
 	gorm.Model
 	Owner  string `gorm:"type:varchar(50);not null;"`
 	Name   string `gorm:"type:varchar(100);not null;"`
-	Secret string `gorm:"type:text;not null;"`
+	Secret string `gorm:"type:json;not null;"`
 }
 
+func (t *Secret) Additem(owner string, name string, token string) error {
+	text := t.jsoncode(t.itemToken(token))
+	return t.Add(owner, name, text)
+}
+func (t *Secret) Additem1(owner string, name string, user string, pass string) error {
+	text := t.jsoncode(t.itemCredencial(user, pass))
+	return t.Add(owner, name, text)
+}
+func (t *Secret) Additem2(owner string, name string, account string, user string, pass string) error {
+	text := t.jsoncode(t.itemAmazonCredencial(account, user, pass))
+	return t.Add(owner, name, text)
+}
 func (this *Secret) Add(owner string, name string, text string) error {
 	this.Owner = owner
 	this.Name = name

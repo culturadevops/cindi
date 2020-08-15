@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"strconv"
+
 	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
@@ -24,30 +26,23 @@ import (
 // delCmd represents the del command
 var delCmd = &cobra.Command{
 	Use:   "del",
-	Short: "Elimina credencial dando un identificador",
+	Short: "Elimina secreto por identificador",
 	Long:  `Elimina un secreto dando un identificador puede ser el nombre o el id del registro`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		//if flags, _ := cmd.Flags().GetBool("id"); flags {
-		//id, _ := strconv.ParseInt(args[0], 10, 64)
-		//	if flags, _ := cmd.Flags().GetBool("secret"); flags {
-		//		models.VarSecret.DelForId(libs.Owner, id)
-		//	} else {
-		//	models.VarCredential.DelForId(libs.Owner, id)
-		//}
-		//} else {
-		if flags, _ := cmd.Flags().GetBool("secret"); flags {
-			models.VarSecret.Del(libs.Owner, args[0])
+		if flags, _ := cmd.Flags().GetBool("id"); flags {
+			id, _ := strconv.ParseInt(args[0], 10, 64)
+			models.VarSecret.DelForId(libs.Owner, id)
 		} else {
-			models.VarCredential.Del(libs.Owner, args[0])
+			models.VarSecret.Del(libs.Owner, args[0])
 		}
-		//}
+
 	},
 }
 
 func init() {
 	delCmd.Flags().BoolP("id", "i", false, "Eliminar por id")
-	delCmd.Flags().BoolP("secret", "s", false, "Crear un secreto en forma de token")
+
 	rootCmd.AddCommand(delCmd)
 
 	// Here you will define your flags and configuration settings.
