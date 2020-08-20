@@ -1,9 +1,8 @@
 package models
 
 import (
-	"errors"
-
 	"encoding/json"
+	"errors"
 
 	"github.com/culturadevops/cindi/libs"
 	"github.com/jinzhu/gorm"
@@ -14,6 +13,21 @@ var VarSecret *Secret
 type Items struct {
 	Type  string            `json:"type"`
 	Items map[string]string `json:"item"`
+}
+
+func (this *Secret) itemCommand(token string) Items {
+
+	i := make(map[string]string)
+	i["secret"] = token
+	res := Items{Type: "command", Items: i}
+	return res
+}
+func (this *Secret) itemFile(token string) Items {
+
+	i := make(map[string]string)
+	i["secret"] = token
+	res := Items{Type: "file", Items: i}
+	return res
 }
 
 func (this *Secret) itemToken(token string) Items {
@@ -53,6 +67,14 @@ type Secret struct {
 	Secret string `gorm:"type:json;not null;"`
 }
 
+func (t *Secret) AdditemFile(owner string, name string, token string) error {
+	text := t.jsoncode(t.itemFile(token))
+	return t.Add(owner, name, text)
+}
+func (t *Secret) AdditemCommand(owner string, name string, token string) error {
+	text := t.jsoncode(t.itemCommand(token))
+	return t.Add(owner, name, text)
+}
 func (t *Secret) Additem(owner string, name string, token string) error {
 	text := t.jsoncode(t.itemToken(token))
 	return t.Add(owner, name, text)

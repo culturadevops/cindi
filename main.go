@@ -65,7 +65,7 @@ func main() {
 
 	}
 	dir := home + "/.config/cindi"
-	file := dir + "/mysql1.toml"
+	file := dir + "/mysql.toml"
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		fmt.Println("Creando archivo de configuración")
 		crearDirectorioSiNoExiste(dir)

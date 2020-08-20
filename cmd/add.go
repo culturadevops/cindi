@@ -39,8 +39,24 @@ Recuerda el ultimo parametro siempre sera el secreto
 				print("falta un valor 'secret'")
 				return nil
 			}
-		}
-		if flags, _ := cmd.Flags().GetBool("secret2"); flags {
+		} else if flags, _ := cmd.Flags().GetBool("file"); flags {
+			if len(args) == 2 {
+				print("falta implementar  la parte de busqueda y carga del archivo en bd...sorry")
+				return nil
+				//return models.VarSecret.AdditemFile(libs.Owner, args[0], args[1])
+			} else {
+				print("falta el valor 'file'")
+				return nil
+			}
+		} else if flags, _ := cmd.Flags().GetBool("command"); flags {
+			if len(args) == 2 {
+				return models.VarSecret.AdditemCommand(libs.Owner, args[0], args[1])
+			} else {
+				print("falta el valor 'comando'")
+				return nil
+			}
+
+		} else if flags, _ := cmd.Flags().GetBool("secret2"); flags {
 			if len(args) == 3 {
 				return models.VarSecret.Additem1(libs.Owner, args[0], args[1], args[2])
 			} else {
@@ -57,15 +73,17 @@ Recuerda el ultimo parametro siempre sera el secreto
 				return nil
 			}
 		}
-		print("Falta modificador user -h para ver opciones")
+		print("Falta modificador; use -h para ver opciones")
 		return nil
 	},
 }
 
 func init() {
-	addCmd.Flags().BoolP("secret1", "t", false, "Crear un secreto en forma token de 'secret' ")
-	addCmd.Flags().BoolP("secret2", "c", false, "Crear un secreto en forma credencial de user/secret")
-	addCmd.Flags().BoolP("secret3", "a", false, "Crear un secreto en forma amazon credencial de Accountid/user/secret")
+	addCmd.Flags().BoolP("command", "c", false, "Crear un comando en forma token es visible en el ls ")
+	addCmd.Flags().BoolP("file", "f", false, "Crear un secreto en forma token pero desde archivos, ideal para SSH-KEY")
+	addCmd.Flags().BoolP("secret", "t", false, "Crear un secreto en forma token de 'secret' ")
+	addCmd.Flags().BoolP("user", "u", false, "Crear un secreto en forma credencial de user/secret")
+	addCmd.Flags().BoolP("amazonid", "a", false, "Crear un secreto en forma amazon credencial de Accountid/user/secret")
 	rootCmd.AddCommand(addCmd)
 
 	// Here you will define your flags and configuration settings.

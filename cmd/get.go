@@ -51,16 +51,19 @@ var getCmd = &cobra.Command{
 		if x.Type == "amazon" {
 			fmt.Printf("Identificador %v - %v \nAccount ID= %vUser= %v \n", args[0], secret.Name, x.Items["account"], x.Items["user"])
 		}
-		clipboard.WriteAll(x.Items["secret"])
-
-		fmt.Printf("use ctrl+v para pegar el SECRETO de %v - %v  \n", args[0], secret.Name)
+		if flags, _ := cmd.Flags().GetBool("out"); flags {
+			fmt.Printf("%v", x.Items["secret"])
+		} else {
+			clipboard.WriteAll(x.Items["secret"])
+			fmt.Printf("use ctrl+v para pegar el SECRETO de %v - %v  \n", args[0], secret.Name)
+		}
 
 	},
 }
 
 func init() {
-	getCmd.Flags().BoolP("id", "i", false, "Obtiene una cuenta dado el numero de id")
-
+	getCmd.Flags().BoolP("id", "i", false, "Obtien una secret dado el numero de id")
+	getCmd.Flags().BoolP("out", "o", false, "Obtien un secreto por pantalla ideal para ssh y command ")
 	rootCmd.AddCommand(getCmd)
 
 	// Here you will define your flags and configuration settings.

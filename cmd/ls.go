@@ -36,7 +36,13 @@ var lsCmd = &cobra.Command{
 		fmt.Printf("Hay %v secretos\n", len(listsecret))
 		for _, value := range listsecret {
 			json.Unmarshal([]byte(value.Secret), &x)
-			fmt.Printf("%v-%v t:%v\n", value.ID, value.Name, x.Type)
+			if x.Type != "command" {
+				fmt.Printf("%v-%v t:%v\n", value.ID, value.Name, x.Type)
+
+			} else {
+				fmt.Printf("%v-%v t:%v %v\n", value.ID, value.Name, x.Type, x.Items["secret"])
+			}
+
 		}
 	},
 }
