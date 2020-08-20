@@ -112,7 +112,6 @@ func initConfig() {
 		viper.GetInt("default.MaxOpenConns"),
 	}
 	libs.DB = dbConfig.InitDB()
-	models.VarCredential = &models.Credential{}
 	models.VarSecret = &models.Secret{}
 
 	if viper.GetBool("default.sql_log") {
