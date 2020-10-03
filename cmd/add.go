@@ -32,7 +32,7 @@ var addCmd = &cobra.Command{
 Recuerda el ultimo parametro siempre sera el secreto
 			`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if flags, _ := cmd.Flags().GetBool("secret1"); flags {
+		if flags, _ := cmd.Flags().GetBool("token"); flags {
 			if len(args) == 2 {
 				return models.VarSecret.Additem(libs.Owner, args[0], args[1])
 			} else {
@@ -56,7 +56,7 @@ Recuerda el ultimo parametro siempre sera el secreto
 				return nil
 			}
 
-		} else if flags, _ := cmd.Flags().GetBool("secret2"); flags {
+		} else if flags, _ := cmd.Flags().GetBool("user"); flags {
 			if len(args) == 3 {
 				return models.VarSecret.Additem1(libs.Owner, args[0], args[1], args[2])
 			} else {
@@ -65,7 +65,7 @@ Recuerda el ultimo parametro siempre sera el secreto
 			}
 
 			//	return models.VarCredential.Add(libs.Owner, args[0], args[1], args[2])
-		} else if flags, _ := cmd.Flags().GetBool("secret3"); flags {
+		} else if flags, _ := cmd.Flags().GetBool("amazonid"); flags {
 			if len(args) == 4 {
 				return models.VarSecret.Additem2(libs.Owner, args[0], args[1], args[2], args[3])
 			} else {
@@ -81,7 +81,7 @@ Recuerda el ultimo parametro siempre sera el secreto
 func init() {
 	addCmd.Flags().BoolP("command", "c", false, "Crear un comando en forma token es visible en el ls ")
 	addCmd.Flags().BoolP("file", "f", false, "Crear un secreto en forma token pero desde archivos, ideal para SSH-KEY")
-	addCmd.Flags().BoolP("secret", "t", false, "Crear un secreto en forma token de 'secret' ")
+	addCmd.Flags().BoolP("token", "t", false, "Crear un secreto en forma token de 'secret' ")
 	addCmd.Flags().BoolP("user", "u", false, "Crear un secreto en forma credencial de user/secret")
 	addCmd.Flags().BoolP("amazonid", "a", false, "Crear un secreto en forma amazon credencial de Accountid/user/secret")
 	rootCmd.AddCommand(addCmd)

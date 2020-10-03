@@ -15,42 +15,33 @@ type Items struct {
 	Items map[string]string `json:"item"`
 }
 
-func (this *Secret) itemCommand(token string) Items {
-
+func (this *Secret) CreateItem(secret string, types string) Items {
 	i := make(map[string]string)
-	i["secret"] = token
-	res := Items{Type: "command", Items: i}
-	return res
+	i["secret"] = secret
+	return Items{Type: types, Items: i}
+
 }
-func (this *Secret) itemFile(token string) Items {
-
-	i := make(map[string]string)
-	i["secret"] = token
-	res := Items{Type: "file", Items: i}
-	return res
+func (this *Secret) itemCommand(secret string) Items {
+	return this.CreateItem(secret, "command")
+}
+func (this *Secret) itemFile(secret string) Items {
+	return this.CreateItem(secret, "file")
 }
 
-func (this *Secret) itemToken(token string) Items {
-
-	i := make(map[string]string)
-	i["secret"] = token
-	res := Items{Type: "token", Items: i}
-	return res
+func (this *Secret) itemToken(secret string) Items {
+	return this.CreateItem(secret, "token")
 }
 
 func (this *Secret) itemCredencial(user string, pass string) Items {
-	i := make(map[string]string)
-	i["user"] = user
-	i["secret"] = pass
-	res := Items{Type: "credential", Items: i}
+	res := this.CreateItem(pass, "credential")
+	res.Items["user"] = user
 	return res
 }
 func (this *Secret) itemAmazonCredencial(accountid string, user string, pass string) Items {
-	i := make(map[string]string)
-	i["account"] = accountid
-	i["user"] = user
-	i["secret"] = pass
-	res := Items{Type: "amazon", Items: i}
+	res := this.itemCredencial(user, pass)
+	res.Items["account"] = accountid
+	res.Type = "amazon"
+
 	return res
 }
 func (this *Secret) jsoncode(item Items) string {
