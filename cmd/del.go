@@ -17,8 +17,6 @@ package cmd
 
 import (
 	"strconv"
-
-	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -32,9 +30,9 @@ var delCmd = &cobra.Command{
 
 		if flags, _ := cmd.Flags().GetBool("id"); flags {
 			id, _ := strconv.ParseInt(args[0], 10, 64)
-			models.VarSecret.DelForId(libs.Owner, id)
+			models.VarSecret.DelForId(Owner, id)
 		} else {
-			models.VarSecret.Del(libs.Owner, args[0])
+			models.VarSecret.Del(Owner, args[0])
 		}
 
 	},

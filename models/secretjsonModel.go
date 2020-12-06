@@ -3,8 +3,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
-
-	"github.com/culturadevops/cindi/libs"
+	"github.com/culturadevops/GORM/libs"
 	"github.com/jinzhu/gorm"
 )
 
@@ -135,12 +134,10 @@ func (this *Secret) DelForId(owner string, id int64) error {
 }
 func (this *Secret) Update(owner string, name string, secret string) error {
 	var varSecret Secret
-
-	varSecret.Name = name
-
 	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&varSecret).RecordNotFound() {
 		return errors.New("no existe la credencial " + name)
 	}
+	varSecret.Name = name
 	varSecret.Secret = secret
 
 	if err := libs.DB.Save(&varSecret).Error; err != nil {

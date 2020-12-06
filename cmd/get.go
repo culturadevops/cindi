@@ -21,7 +21,6 @@ import (
 	"strconv"
 
 	"github.com/atotto/clipboard"
-	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -39,9 +38,9 @@ var getCmd = &cobra.Command{
 
 		if flags, _ := cmd.Flags().GetBool("id"); flags {
 			id, _ := strconv.ParseInt(args[0], 10, 64)
-			secret, _ = models.VarSecret.GetForId(libs.Owner, id)
+			secret, _ = models.VarSecret.GetForId(Owner, id)
 		} else {
-			secret, _ = models.VarSecret.Get(libs.Owner, args[0])
+			secret, _ = models.VarSecret.Get(Owner, args[0])
 
 		}
 		json.Unmarshal([]byte(secret.Secret), &x)

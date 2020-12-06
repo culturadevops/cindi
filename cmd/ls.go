@@ -18,8 +18,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -31,7 +29,7 @@ var lsCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var x models.Items
-		listsecret := models.VarSecret.List(libs.Owner)
+		listsecret := models.VarSecret.List(Owner)
 
 		fmt.Printf("Hay %v secretos\n", len(listsecret))
 		for _, value := range listsecret {

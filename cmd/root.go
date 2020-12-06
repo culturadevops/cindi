@@ -17,17 +17,17 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+	//"log"
 	"os"
-
-	"github.com/culturadevops/cindi/libs"
+	"github.com/culturadevops/GORM/libs"
+	//"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	config "github.com/spf13/viper"
 )
-
-var cfgFile string
+var Owner string
+//var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -70,20 +70,23 @@ func initConfig() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
+	dbConfig := libs.Configure(home, ".config/cindi/mysql")
+	libs.DB = dbConfig.InitMysqlDB()
+	Owner = config.GetString("default.owner")
 	// Search config in home directory with name ".cindi" (without extension).
-	viper.AddConfigPath(home)
+	//viper.AddConfigPath(home)
 	//viper.SetConfigName(".cindi")
 
-	viper.AutomaticEnv() // read in environment variables that match
+	//viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	viper.SetConfigName(".config/cindi/mysql")
-	file := home + ".config/cindi/mysql"
-	if err := viper.ReadInConfig(); err != nil {
+	//viper.SetConfigName(".config/cindi/mysql")
+	//file := home + ".config/cindi/mysql"
+	
+/*	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)
 	}
-	libs.Owner = viper.GetString("default.owner")
+	Owner = viper.GetString("default.owner")
 
 	if viper.GetString("default.host") == "" {
 		fmt.Println("falta host en el archivo " + file)
@@ -111,13 +114,17 @@ func initConfig() {
 		viper.GetInt("default.MaxIdleConns"),
 		viper.GetInt("default.MaxOpenConns"),
 	}
-	libs.DB = dbConfig.InitDB()
-	models.VarSecret = &models.Secret{}
-
 	if viper.GetBool("default.sql_log") {
 		libs.DB.LogMode(true)
 	} else {
 		libs.DB.LogMode(false)
 	}
 
+	*/
+
+	//libs.DB = dbConfig.InitDB()
+	//Owner = viper.GetString("default.owner")
+	models.VarSecret = &models.Secret{}
+
+	
 }

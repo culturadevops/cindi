@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/culturadevops/cindi/libs"
+	
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -34,7 +34,7 @@ Recuerda el ultimo parametro siempre sera el secreto
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if flags, _ := cmd.Flags().GetBool("token"); flags {
 			if len(args) == 2 {
-				return models.VarSecret.Additem(libs.Owner, args[0], args[1])
+				return models.VarSecret.Additem(Owner, args[0], args[1])
 			} else {
 				print("falta un valor 'secret'")
 				return nil
@@ -43,14 +43,14 @@ Recuerda el ultimo parametro siempre sera el secreto
 			if len(args) == 2 {
 				print("falta implementar  la parte de busqueda y carga del archivo en bd...sorry")
 				return nil
-				//return models.VarSecret.AdditemFile(libs.Owner, args[0], args[1])
+				//return models.VarSecret.AdditemFile(Owner, args[0], args[1])
 			} else {
 				print("falta el valor 'file'")
 				return nil
 			}
 		} else if flags, _ := cmd.Flags().GetBool("command"); flags {
 			if len(args) == 2 {
-				return models.VarSecret.AdditemCommand(libs.Owner, args[0], args[1])
+				return models.VarSecret.AdditemCommand(Owner, args[0], args[1])
 			} else {
 				print("falta el valor 'comando'")
 				return nil
@@ -58,16 +58,16 @@ Recuerda el ultimo parametro siempre sera el secreto
 
 		} else if flags, _ := cmd.Flags().GetBool("user"); flags {
 			if len(args) == 3 {
-				return models.VarSecret.Additem1(libs.Owner, args[0], args[1], args[2])
+				return models.VarSecret.Additem1(Owner, args[0], args[1], args[2])
 			} else {
 				print("Necesitas 'idenficador' 'user' 'secret' ")
 				return nil
 			}
 
-			//	return models.VarCredential.Add(libs.Owner, args[0], args[1], args[2])
+			//	return models.VarCredential.Add(Owner, args[0], args[1], args[2])
 		} else if flags, _ := cmd.Flags().GetBool("amazonid"); flags {
 			if len(args) == 4 {
-				return models.VarSecret.Additem2(libs.Owner, args[0], args[1], args[2], args[3])
+				return models.VarSecret.Additem2(Owner, args[0], args[1], args[2], args[3])
 			} else {
 				print("Necesitas 'idenficador' 'account' 'user' 'secret' ")
 				return nil
