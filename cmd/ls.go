@@ -18,6 +18,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/culturadevops/cindi/models"
 	"github.com/spf13/cobra"
 )
@@ -35,7 +36,7 @@ var lsCmd = &cobra.Command{
 		for _, value := range listsecret {
 			json.Unmarshal([]byte(value.Secret), &x)
 			if x.Type != "command" {
-				fmt.Printf("%v-%v t:%v\n", value.ID, value.Name, x.Type)
+				fmt.Printf("%v-%v tipo:%v\n", value.ID, value.Name, x.Type)
 
 			} else {
 				fmt.Printf("%v-%v t:%v %v\n", value.ID, value.Name, x.Type, x.Items["secret"])

@@ -35,23 +35,32 @@ var getCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var x models.Items
 		secret := models.Secret{}
-
 		if flags, _ := cmd.Flags().GetBool("id"); flags {
+			secret, _ = models.VarSecret.Get(Owner, args[0])
+		} else {
 			id, _ := strconv.ParseInt(args[0], 10, 64)
 			secret, _ = models.VarSecret.GetForId(Owner, id)
-		} else {
-			secret, _ = models.VarSecret.Get(Owner, args[0])
-
 		}
 		json.Unmarshal([]byte(secret.Secret), &x)
 		if x.Type == "credential" {
-			fmt.Printf("Identificador %v - %v \nUser= %v \n", args[0], secret.Name, x.Items["user"])
+
+			fmt.Printf("Identificador %v - Name %v \nUser= %v \n", args[0], secret.Name, x.Items["user"])
 		}
 		if x.Type == "amazon" {
-			fmt.Printf("Identificador %v - %v \nAccount ID= %vUser= %v \n", args[0], secret.Name, x.Items["account"], x.Items["user"])
+			fmt.Printf("Identificador %v - Name %v \nAccount ID= %vUser= %v \n", args[0], secret.Name, x.Items["account"], x.Items["user"])
 		}
-		if flags, _ := cmd.Flags().GetBool("out"); flags {
-			fmt.Printf("%v", x.Items["secret"])
+		if flags, _ := cmd.Flags().GetBool("output"); flags {
+			if flags, _ := cmd.Flags().GetBool("outputall"); flags {
+				if x.Type == "credential" {
+					fmt.Printf("{%v:%v}", x.Items["user"], x.Items["secret"])
+				}
+				if x.Type == "amazon" {
+					fmt.Printf("{%v:{%v:%v}}", x.Items["account"], x.Items["user"], x.Items["secret"])
+				}
+			} else {
+				fmt.Printf("%v", x.Items["secret"])
+			}
+
 		} else {
 			clipboard.WriteAll(x.Items["secret"])
 			fmt.Printf("use ctrl+v para pegar el SECRETO de %v - %v  \n", args[0], secret.Name)
@@ -61,8 +70,9 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().BoolP("id", "i", false, "Obtien una secret dado el numero de id")
-	getCmd.Flags().BoolP("out", "o", false, "Obtien un secreto por pantalla ideal para ssh y command ")
+	getCmd.Flags().BoolP("id", "t", false, "Obtien una secret dado el nombre ")
+	getCmd.Flags().BoolP("output", "o", false, "Obtien un secreto por pantalla ideal para ssh y command ")
+	getCmd.Flags().BoolP("outputall", "j", false, "Obtien un secreto y toda la data en formato json por pantalla ideal para aplicaciones")
 	rootCmd.AddCommand(getCmd)
 
 	// Here you will define your flags and configuration settings.

@@ -23,7 +23,7 @@ CREATE TABLE `secret` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `owner` varchar(50) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `secret` json NOT NULL,
+  `secret` BLOB NOT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_user_deleted_at` (`deleted_at`),
   KEY `secretname` (`name`),

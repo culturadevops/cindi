@@ -19,20 +19,24 @@ import (
 	"fmt"
 	//"log"
 	"os"
+
 	"github.com/culturadevops/GORM/libs"
+
 	//"github.com/culturadevops/cindi/libs"
 	"github.com/culturadevops/cindi/models"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	config "github.com/spf13/viper"
 )
+
 var Owner string
+
 //var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cindi",
-	Short: "Getionador de credenciales",
+	Short: "Getionador de credenciales v1.1",
 	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -82,43 +86,43 @@ func initConfig() {
 	// If a config file is found, read it in.
 	//viper.SetConfigName(".config/cindi/mysql")
 	//file := home + ".config/cindi/mysql"
-	
-/*	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file, %s", err)
-	}
-	Owner = viper.GetString("default.owner")
 
-	if viper.GetString("default.host") == "" {
-		fmt.Println("falta host en el archivo " + file)
-		os.Exit(1)
-	}
-	if viper.GetString("default.database") == "" {
-		fmt.Println("falta database en el archivo de config " + file)
-		os.Exit(1)
-	}
-	if viper.GetString("default.user") == "" {
-		fmt.Println("falta user en el archivo de config " + file)
-		os.Exit(1)
-	}
-	if viper.GetString("default.password") == "" {
-		fmt.Println("falta password en el archivo de config " + file)
-		os.Exit(1)
-	}
-	dbConfig := libs.DbConfig{
-		viper.GetString("default.host"),
-		viper.GetString("default.port"),
-		viper.GetString("default.database"),
-		viper.GetString("default.user"),
-		viper.GetString("default.password"),
-		viper.GetString("default.charset"),
-		viper.GetInt("default.MaxIdleConns"),
-		viper.GetInt("default.MaxOpenConns"),
-	}
-	if viper.GetBool("default.sql_log") {
-		libs.DB.LogMode(true)
-	} else {
-		libs.DB.LogMode(false)
-	}
+	/*	if err := viper.ReadInConfig(); err != nil {
+			log.Fatalf("Error reading config file, %s", err)
+		}
+		Owner = viper.GetString("default.owner")
+
+		if viper.GetString("default.host") == "" {
+			fmt.Println("falta host en el archivo " + file)
+			os.Exit(1)
+		}
+		if viper.GetString("default.database") == "" {
+			fmt.Println("falta database en el archivo de config " + file)
+			os.Exit(1)
+		}
+		if viper.GetString("default.user") == "" {
+			fmt.Println("falta user en el archivo de config " + file)
+			os.Exit(1)
+		}
+		if viper.GetString("default.password") == "" {
+			fmt.Println("falta password en el archivo de config " + file)
+			os.Exit(1)
+		}
+		dbConfig := libs.DbConfig{
+			viper.GetString("default.host"),
+			viper.GetString("default.port"),
+			viper.GetString("default.database"),
+			viper.GetString("default.user"),
+			viper.GetString("default.password"),
+			viper.GetString("default.charset"),
+			viper.GetInt("default.MaxIdleConns"),
+			viper.GetInt("default.MaxOpenConns"),
+		}
+		if viper.GetBool("default.sql_log") {
+			libs.DB.LogMode(true)
+		} else {
+			libs.DB.LogMode(false)
+		}
 
 	*/
 
@@ -126,5 +130,4 @@ func initConfig() {
 	//Owner = viper.GetString("default.owner")
 	models.VarSecret = &models.Secret{}
 
-	
 }
