@@ -1,3 +1,5 @@
+create database cindi;
+use cindi;
 DROP TABLE IF EXISTS `credential`;
 CREATE TABLE `credential` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,

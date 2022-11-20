@@ -1,4 +1,9 @@
+monta un servidor y agrega la tablas.sql
 
+## mysql server
+docker run -d -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=secret mysql:5.7.40-debian
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mysql
+docker exec -it mysql-db mysql -p
 
 
 # Mis Libros:

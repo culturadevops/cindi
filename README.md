@@ -43,6 +43,10 @@ cindi add -h
 2. Configurar las variables de entorno la ruta del cindi
 3. Mysql server
 
+## mysql server
+docker run -d -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=secret mysql:5.7.40-debian
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 59259d6b98da0bd27116d252bcd1ea1aa501150c3ed46e3b0724d73728ca2c9a
+docker exec -it mysql-db mysql -p
 
 ## Installation
 
