@@ -155,6 +155,34 @@ func (this *Secret) DelForId(owner string, id int64) error {
 	}
 	return nil
 }
+func (this *Secret) UpdateEncry(owner string, id int64, newSecret string) (Secret, error) {
+	var data = Secret{}
+	var x Items
+	result := fmt.Sprintf("select `owner`,`name`,CAST(AES_DECRYPT(secret,'password')AS CHAR) AS `secret` FROM  `cindi`.`secret` WHERE owner = '%s' AND  id = '%v';", owner, id)
+	if err := libs.DB.Raw(result).Scan(&data).Error; err != nil {
+		fmt.Println(err)
+		return Secret{}, errors.New("no se encontro las credenciales ")
+	}
+	fmt.Println(data)
+	json.Unmarshal([]byte(data.Secret), &x)
+
+	fmt.Println("guardando nueva contrase;a")
+	/* TODO validar si es necesario dividir por tipos de credenciales o si todos usan el mismo estilo*/
+	if x.Type == "credential" {
+		x.Items["secret"] = newSecret
+		fmt.Println(newSecret)
+		text := this.jsoncode(x)
+		result := fmt.Sprintf("UPDATE `cindi`.`secret` SET secret = AES_ENCRYPT('%s','password') WHERE owner = '%s' AND  id = '%v';", text, owner, id)
+		if err := libs.DB.Exec(result).Error; err != nil {
+			fmt.Println("error en scan update")
+			fmt.Println(err)
+			return Secret{}, err
+		}
+		return Secret{}, nil
+	}
+	fmt.Println(data)
+	return data, nil
+}
 func (this *Secret) Update(owner string, name string, secret string) error {
 	var varSecret Secret
 	if libs.DB.Where("owner = ? AND  name = ? ", owner, name).Find(&varSecret).RecordNotFound() {
